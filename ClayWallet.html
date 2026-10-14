@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ClayWallet</title>
+<style>
+:root{--bg:#ffe3ee;--surf:#fff1f6;--txt:#4a2c4f;--mut:#a07aa5;--acc:#ff6fa5;--sd:rgba(214,120,160,.4);--sl:rgba(255,255,255,.95);--ii:rgba(255,255,255,.65);--io:rgba(120,110,170,.18);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#25223a;--surf:#2e2a47;--txt:#ece9fb;--mut:#9d97bd;--acc:#9d90ff;--sd:rgba(10,8,25,.6);--sl:rgba(90,82,140,.3);--ii:rgba(255,255,255,.1);--io:rgba(0,0,0,.3)}}
+:root[data-theme="dark"]{--bg:#25223a;--surf:#2e2a47;--txt:#ece9fb;--mut:#9d97bd;--acc:#9d90ff;--sd:rgba(10,8,25,.6);--sl:rgba(90,82,140,.3);--ii:rgba(255,255,255,.1);--io:rgba(0,0,0,.3)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:radial-gradient(circle at 8% 0%,rgba(80,200,255,.35) 0,transparent 40%),radial-gradient(circle at 100% 25%,rgba(255,200,60,.3) 0,transparent 40%),radial-gradient(circle at 0% 100%,rgba(150,110,255,.35) 0,transparent 45%),var(--bg);background-attachment:fixed;color:var(--txt);font-family:"Nunito","Segoe UI",system-ui,sans-serif;min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 110px}
+.clay{background:var(--surf);border-radius:28px;box-shadow:9px 9px 20px var(--sd),-9px -9px 20px var(--sl),inset -5px -5px 10px var(--io),inset 5px 5px 10px var(--ii)}
+.pressed{background:var(--bg);border-radius:18px;box-shadow:inset 5px 5px 10px var(--sd),inset -5px -5px 10px var(--sl)}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+h1{font-size:1.6rem;margin:0;font-weight:900}h1 span{background:linear-gradient(90deg,#ff6fa5,#ffb020,#3da5ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+button{font:inherit;color:inherit;border:0;cursor:pointer}
+.btn{padding:12px 20px;border-radius:20px;background:var(--surf);font-weight:800;box-shadow:6px 6px 12px var(--sd),-6px -6px 12px var(--sl),inset -3px -3px 6px var(--io),inset 3px 3px 6px var(--ii);transition:.15s}
+.btn:active{transform:scale(.96);box-shadow:inset 4px 4px 8px var(--sd),inset -4px -4px 8px var(--sl)}
+.btn.pri{background:linear-gradient(145deg,#ff8fb8,#ff9f1c);color:#fff}
+.icon{width:46px;height:46px;padding:0;display:grid;place-items:center;font-size:1.2rem}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.stat{padding:16px;text-align:center}.stats .stat{color:#fff}.stats .stat small{color:rgba(255,255,255,.92)}.stats .stat:nth-child(1){background:linear-gradient(145deg,#ff9ac1,#ff5c8a)}.stats .stat:nth-child(2){background:linear-gradient(145deg,#ffd35c,#ff9f1c)}.stats .stat:nth-child(3){background:linear-gradient(145deg,#6fd3ff,#3d7bff)}.stat b{display:block;font-size:1.7rem}.stat small{color:var(--mut);font-weight:700}
+.bar{display:flex;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.tabs{display:flex;gap:8px;padding:6px;flex:1;min-width:220px}
+.tab{flex:1;padding:10px;border-radius:14px;background:transparent;font-weight:800;color:var(--mut)}
+.tab.on{background:linear-gradient(145deg,#ff8fb8,#ff6fa5);color:#fff;box-shadow:4px 4px 8px var(--sd),-4px -4px 8px var(--sl)}
+input,select,textarea{width:100%;font:inherit;color:var(--txt);border:0;outline:0;padding:13px 16px;margin-top:6px}
+.search{flex:2;min-width:200px;margin:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:26px}
+.card{padding:22px;min-height:190px;color:#fff;position:relative;display:flex;flex-direction:column;justify-content:space-between;border-radius:30px;box-shadow:10px 10px 22px var(--sd),-8px -8px 18px var(--sl),inset -6px -6px 12px rgba(0,0,0,.14),inset 6px 6px 12px rgba(255,255,255,.35)}
+.card .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card .num{font-size:1.1rem;letter-spacing:.08em;white-space:nowrap;font-weight:800;margin:14px 0;text-shadow:0 2px 3px rgba(0,0,0,.2)}.card .row{flex-wrap:wrap}.card .mini{margin-left:auto}
+.card small{opacity:.85;font-weight:700;display:block;font-size:.7rem;text-transform:uppercase}
+.net{font-weight:900;font-style:italic;font-size:1.1rem}
+.mini{display:flex;gap:6px}
+.mini button{width:34px;height:34px;border-radius:12px;background:rgba(255,255,255,.25);color:#fff;box-shadow:inset 2px 2px 4px rgba(255,255,255,.3),inset -2px -2px 4px rgba(0,0,0,.12)}
+.item{padding:18px;display:flex;align-items:center;gap:14px}
+.item .av{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;font-weight:900;color:#fff;flex:none}
+.item .t{flex:1;min-width:0}.item .t b,.item .t small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item small{color:var(--mut)}
+.item .mini button{background:var(--bg);color:var(--txt);box-shadow:3px 3px 6px var(--sd),-3px -3px 6px var(--sl)}
+.list{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.empty{padding:40px;text-align:center;color:var(--mut);grid-column:1/-1}
+.fab{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));width:64px;height:64px;border-radius:50%;font-size:2rem;background:linear-gradient(145deg,#ff8fb8,#ff9f1c);color:#fff;box-shadow:8px 8px 16px var(--sd),-4px -4px 10px var(--sl),inset -4px -4px 8px rgba(0,0,0,.2),inset 4px 4px 8px rgba(255,255,255,.4);z-index:5}
+.modal{position:fixed;inset:0;background:rgba(40,30,70,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+.modal.open{display:flex}
+.sheet{width:100%;max-width:460px;max-height:92%;overflow:auto;padding:24px}
+.sheet h2{margin:0 0 8px}label{font-weight:800;font-size:.85rem;color:var(--mut);display:block;margin-top:12px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.swatches{display:flex;gap:10px;margin-top:8px}
+.sw{width:38px;height:38px;border-radius:50%;box-shadow:3px 3px 6px var(--sd),inset -3px -3px 5px rgba(0,0,0,.15),inset 3px 3px 5px rgba(255,255,255,.4)}
+.sw.on{outline:3px solid var(--acc);outline-offset:3px}
+.acts{display:flex;gap:12px;margin-top:20px}.acts .btn{flex:1}
+.toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);padding:12px 20px;z-index:20;opacity:0;pointer-events:none;transition:.25s}
+.toast.show{opacity:1}
+.note{color:var(--mut);font-size:.8rem;text-align:center;margin-top:30px}
+@media (max-width:560px){.stats{gap:10px}.stat{padding:12px 6px}.stat b{font-size:1.3rem}.grid{gap:22px}}
+.wrap{position:relative;z-index:1}
+.bg{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.bg i{position:absolute;border-radius:50%;opacity:.55;animation:float 9s ease-in-out infinite;box-shadow:inset -8px -8px 14px rgba(0,0,0,.12),inset 8px 8px 14px rgba(255,255,255,.5)}
+.bg i:nth-child(1){width:90px;height:90px;background:#ff9ac1;left:6%;top:18%}
+.bg i:nth-child(2){width:60px;height:60px;background:#ffd35c;right:8%;top:12%;animation-delay:-2s}
+.bg i:nth-child(3){width:120px;height:120px;background:#6fd3ff;right:4%;bottom:14%;animation-delay:-4s}
+.bg i:nth-child(4){width:70px;height:70px;background:#b79cff;left:10%;bottom:10%;animation-delay:-6s}
+.bg i:nth-child(5){width:46px;height:46px;background:#7ed957;left:48%;top:6%;animation-delay:-3s}
+.bg i:nth-child(6){width:56px;height:56px;background:#ff7a45;left:30%;bottom:6%;border-radius:32%;animation-delay:-5s}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-28px) rotate(14deg)}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(var(--r,1deg))}50%{transform:translateY(-6px) rotate(calc(var(--r,1deg)*-1))}}
+@keyframes wiggle{0%,100%{transform:rotate(0)}20%{transform:rotate(-4deg) scale(1.04)}40%{transform:rotate(4deg) scale(1.04)}60%{transform:rotate(-3deg) scale(1.04)}80%{transform:rotate(2deg) scale(1.04)}}
+@keyframes jump{0%,100%{transform:translateY(0) scale(1)}35%{transform:translateY(-14px) scale(1.05,.95)}55%{transform:translateY(0) scale(1.1,.9)}70%{transform:translateY(-4px)}}
+@keyframes pop{from{transform:scale(.5) translateY(40px) rotate(-6deg);opacity:0}60%{transform:scale(1.08) rotate(2deg);opacity:1}to{transform:none;opacity:1}}
+@keyframes conf{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--x),var(--y)) rotate(var(--rot));opacity:0}}
+.mas{display:inline-block;font-style:normal;animation:jump 2s ease-in-out infinite}
+.stat{animation:pop .6s cubic-bezier(.34,1.56,.64,1) backwards}
+.stat:nth-child(2){animation-delay:.1s}.stat:nth-child(3){animation-delay:.2s}
+.card{--r:1deg;animation:bob 5s ease-in-out infinite}
+.card:nth-child(even){--r:-1deg}
+.anim .card{animation:pop .65s cubic-bezier(.34,1.56,.64,1) var(--d,0s) backwards,bob 5s ease-in-out calc(var(--d,0s) + .7s) infinite}
+.anim .item,.anim .empty{animation:pop .6s cubic-bezier(.34,1.56,.64,1) var(--d,0s) backwards}
+.card:hover{animation:wiggle .6s ease-in-out}
+.item{transition:.2s}.item:hover{transform:translateY(-4px) rotate(-1deg) scale(1.02)}
+.btn:hover{transform:translateY(-3px) rotate(-2deg)}
+.mini button{transition:.15s}.mini button:hover{transform:scale(1.2) rotate(8deg)}.mini button:active{transform:scale(.8)}
+.tab{transition:.2s}.tab:hover{transform:scale(1.05)}
+.sw{transition:.15s}.sw:hover{transform:scale(1.2) rotate(10deg)}.sw.on{transform:scale(1.15)}
+.fab{animation:jump 2.2s ease-in-out infinite}
+.fab:hover{animation:none;transform:rotate(90deg) scale(1.12)}
+.modal.open .sheet{animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
+.conf{position:fixed;width:10px;height:14px;border-radius:3px;z-index:50;pointer-events:none;animation:conf 1s ease-out forwards}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.lock{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;background:radial-gradient(circle at 10% 0%,rgba(80,200,255,.4) 0,transparent 45%),radial-gradient(circle at 100% 100%,rgba(255,200,60,.35) 0,transparent 45%),var(--bg)}
+.lock.hide{display:none}
+.lockbox{width:100%;max-width:340px;padding:30px;text-align:center;animation:pop .6s cubic-bezier(.34,1.56,.64,1)}
+.lockbox h2{margin:6px 0 2px;font-size:1.6rem}.lockbox p{margin:0;color:var(--mut);font-weight:700}
+.lockbox input{text-align:center;font-size:1.5rem;letter-spacing:.4em;margin:16px 0}
+.lockbox .btn{width:100%}.lockbox small{display:block;margin-top:12px;min-height:1.2em;font-weight:800;color:#ff5c7a}
+.big{font-size:3.2rem}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-7px)}80%{transform:translateX(7px)}}
+.shake{animation:shake .4s}
+</style>
+</head>
+<body>
+<div class="lock" id="lock"><div class="clay lockbox"><em class="mas big">🧸</em><h2>ClayWallet</h2><p>Enter your password</p><input class="pressed" id="pw" type="password" inputmode="numeric" autocomplete="off" placeholder="••••"><button class="btn pri" id="go">Unlock 🔓</button><small id="err"></small></div></div>
+<div class="bg"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div class="wrap">
+<header>
+  <h1><em class="mas">🧸</em> Clay<span>Wallet</span></h1>
+  <div style="display:flex;gap:12px"><button class="btn icon" id="lockbtn" title="Lock">🔒</button><button class="btn icon" id="eye" title="Show / hide numbers">👁</button><button class="btn icon" id="theme" title="Toggle theme">🌓</button></div>
+</header>
+<div class="stats">
+  <div class="clay stat"><b id="s1">0</b><small>Cards</small></div>
+  <div class="clay stat"><b id="s2">0</b><small>Favorites</small></div>
+  <div class="clay stat"><b id="s3">0</b><small>Accounts</small></div>
+</div>
+<div class="bar">
+  <div class="pressed tabs"><button class="tab on" data-t="cards">💳 Cards</button><button class="tab" data-t="accts">👤 Accounts</button></div>
+  <input class="pressed search" id="q" placeholder="Search…">
+</div>
+<div id="out"></div>
+<p class="note">💾 Saved only in this browser and not synced. Anyone using this device can see your cards, so use the 👁 button to hide numbers when others are around.</p>
+</div>
+<button class="btn fab" id="add" title="Add">+</button>
+
+<div class="modal" id="m"><div class="clay sheet" id="sheet"></div></div>
+<div class="clay toast" id="toast"></div>
+
+<script>
+const COLORS=['#ff6fa5','#8b6cff','#2ec4b6','#ffb020','#3da5ff','#ff7a45','#7ed957','#ff5c7a'];
+const KEY='claywallet.v1';
+let S={cards:[],accts:[]},tab='cards',q='',anim=true;
+try{const r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const fmtNum=n=>String(n).replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim();
+const numFmt=c=>c.num?(S.show===false?'•••• •••• •••• '+c.num.slice(-4):fmtNum(c.num)):'•••• •••• •••• '+c.last4;
+const cvvFmt=c=>c.cvv?(S.show===false?'•'.repeat(c.cvv.length):esc(c.cvv)):'—';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1600)}
+function copy(t){try{navigator.clipboard.writeText(t).then(()=>toast('Copied ✓'),()=>toast('Copy blocked'))}catch(e){toast('Copy blocked')}}
+
+function render(){
+  $('s1').textContent=S.cards.length;$('s2').textContent=S.cards.filter(c=>c.fav).length;$('s3').textContent=S.accts.length;
+  const f=s=>Object.values(s).join(' ').toLowerCase().includes(q);
+  let h='';
+  if(tab==='cards'){
+    const L=S.cards.filter(f).sort((a,b)=>(b.fav?1:0)-(a.fav?1:0));
+    h=L.length?'<div class="grid">'+L.map(c=>`<div class="card" style="background:radial-gradient(circle at 88% 8%,rgba(255,255,255,.4),transparent 38%),linear-gradient(145deg,${c.color},${c.color}bb)">
+      <div class="row"><b>${esc(c.name)}</b><span class="net">${esc(c.net)}</span></div>
+      <div class="num">${numFmt(c)}</div>
+      <div class="row"><div><small>Holder</small>${esc(c.holder||'—')}</div><div><small>Expires</small>${esc(c.exp||'—')}</div><div><small>CVV</small>${cvvFmt(c)}</div>
+      <div class="mini"><button data-a="fav" data-id="${c.id}">${c.fav?'★':'☆'}</button><button data-a="cp" data-id="${c.id}" title="Copy number">⧉</button><button data-a="cv" data-id="${c.id}" title="Copy CVV">🔑</button><button data-a="edit" data-id="${c.id}">✎</button></div></div>
+      ${c.note?`<small style="margin-top:10px;text-transform:none">📝 ${esc(c.note)}</small>`:''}</div>`).join('')+'</div>'
+      :'<div class="clay empty">No cards yet.<br>Tap + to add your first one 💳</div>';
+  }else{
+    const L=S.accts.filter(f);
+    h=L.length?'<div class="list">'+L.map(a=>`<div class="clay item"><div class="av" style="background:${a.color}">${esc((a.name||'?')[0].toUpperCase())}</div>
+      <div class="t"><b>${esc(a.name)}</b><small>${esc(a.user)}</small>${a.note?`<small>${esc(a.note)}</small>`:''}</div>
+      <div class="mini"><button data-a="cp" data-id="${a.id}">⧉</button><button data-a="edit" data-id="${a.id}">✎</button></div></div>`).join('')+'</div>'
+      :'<div class="clay empty">No accounts yet.<br>Tap + to add one 👤</div>';
+  }
+  $('out').innerHTML=h;$('out').className=anim?'anim':'';document.querySelectorAll('.card,.item').forEach((e,i)=>e.style.setProperty('--d',Math.min(i,10)*.07+'s'));anim=false;
+}
+
+function form(item){
+  const isC=tab==='cards',v=item||{color:COLORS[0],net:'Visa'};
+  $('sheet').innerHTML=`<h2>${item?'Edit':'Add'} ${isC?'card':'account'}</h2>`+(isC?`
+    <label>Nickname<input class="pressed" id="f_name" value="${esc(v.name)}" placeholder="e.g. Travel Visa"></label>
+    <label>Cardholder<input class="pressed" id="f_holder" value="${esc(v.holder)}"></label>
+    <label>Card number<input class="pressed" id="f_num" inputmode="numeric" maxlength="23" placeholder="1234 5678 9012 3456" value="${esc(v.num?fmtNum(v.num):'')}"></label>
+    <div class="two"><label>CVV<input class="pressed" id="f_cvv" inputmode="numeric" maxlength="4" placeholder="123" value="${esc(v.cvv)}"></label>
+    <label>Expiry<input class="pressed" id="f_exp" maxlength="5" placeholder="MM/YY" value="${esc(v.exp)}"></label></div>
+    <label>Network<select class="pressed" id="f_net">${['Visa','Mastercard','Amex','Other'].map(n=>`<option ${v.net===n?'selected':''}>${n}</option>`).join('')}</select></label>
+    <label>Color</label><div class="swatches" id="sw">${COLORS.map(c=>`<button class="sw ${c===v.color?'on':''}" data-c="${c}" style="background:${c}"></button>`).join('')}</div>
+    <label>Note<input class="pressed" id="f_note" value="${esc(v.note)}" placeholder="Billing date, limit…"></label>`:`
+    <label>Service<input class="pressed" id="f_name" value="${esc(v.name)}" placeholder="e.g. Netflix"></label>
+    <label>Username / email<input class="pressed" id="f_user" value="${esc(v.user)}"></label>
+    <label>Note<input class="pressed" id="f_note" value="${esc(v.note)}" placeholder="Plan, renewal date…"></label>
+    <label>Color</label><div class="swatches" id="sw">${COLORS.map(c=>`<button class="sw ${c===v.color?'on':''}" data-c="${c}" style="background:${c}"></button>`).join('')}</div>`)+
+    `<div class="acts">${item?'<button class="btn" id="del">🗑 Delete</button>':''}<button class="btn" id="cancel">Cancel</button><button class="btn pri" id="ok">Save</button></div>`;
+  let col=v.color||COLORS[0];
+  $('sw').onclick=e=>{const c=e.target.dataset.c;if(!c)return;col=c;[...$('sw').children].forEach(b=>b.classList.toggle('on',b.dataset.c===c))};
+  $('cancel').onclick=close;
+  if($('f_num'))$('f_num').oninput=e=>{const d=e.target.value.replace(/\D/g,'').slice(0,19);e.target.value=fmtNum(d);const n=d[0]==='4'?'Visa':/^(5[1-5]|2[2-7])/.test(d)?'Mastercard':/^3[47]/.test(d)?'Amex':null;if(n)$('f_net').value=n};
+  if($('del'))$('del').onclick=()=>{if(confirm('Delete this item?')){S[tab].splice(S[tab].findIndex(x=>x.id===item.id),1);save();close();render()}};
+  $('ok').onclick=()=>{
+    const g=i=>$('f_'+i).value.trim();
+    if(!g('name'))return toast('Add a name');
+    let o;
+    if(isC){const num=g('num').replace(/\D/g,'');if(num.length<13||num.length>19)return toast('Card number must be 13–19 digits');const cvv=g('cvv').replace(/\D/g,'');if(cvv.length<3||cvv.length>4)return toast('CVV is 3 or 4 digits');const l4=num.slice(-4);
+      o={name:g('name'),holder:g('holder'),last4:l4,num,cvv,exp:g('exp'),net:g('net'),note:g('note'),color:col,fav:item?item.fav:false}}
+    else o={name:g('name'),user:g('user'),note:g('note'),color:col};
+    if(item)Object.assign(item,o);else S[tab].push({id:uid(),...o});
+    anim=true;save();close();render();toast('Saved 🎉');confetti(innerWidth/2,innerHeight/3);
+  };
+  $('m').classList.add('open');
+}
+function close(){$('m').classList.remove('open')}
+function confetti(x,y){const cs=['#ff6fa5','#ffb020','#3da5ff','#7ed957','#8b6cff','#ff7a45'];for(let i=0;i<28;i++){const e=document.createElement('i');e.className='conf';const a=Math.random()*6.28,d=60+Math.random()*130;e.style.cssText=`left:${x}px;top:${y}px;background:${cs[i%6]};--x:${Math.cos(a)*d}px;--y:${Math.sin(a)*d+70}px;--rot:${Math.random()*720}deg`;document.body.appendChild(e);setTimeout(()=>e.remove(),1000)}}
+
+$('add').onclick=()=>form();
+$('m').onclick=e=>{if(e.target.id==='m')close()};
+$('q').oninput=e=>{q=e.target.value.toLowerCase();render()};
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{tab=b.dataset.t;anim=true;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));render()});
+$('out').onclick=e=>{
+  const b=e.target.closest('button');if(!b)return;
+  const it=S[tab].find(x=>x.id===b.dataset.id);if(!it)return;
+  if(b.dataset.a==='fav'){const r=b.getBoundingClientRect();it.fav=!it.fav;save();render();if(it.fav)confetti(r.left+17,r.top+17)}
+  else if(b.dataset.a==='edit')form(it);
+  else if(b.dataset.a==='cp')copy(tab==='cards'?(it.num||it.last4):it.user);else if(b.dataset.a==='cv')copy(it.cvv||'');
+};
+$('eye').textContent=S.show===false?'🙈':'👁';$('eye').onclick=()=>{S.show=S.show===false;save();$('eye').textContent=S.show===false?'🙈':'👁';render()};
+$('theme').onclick=()=>{const r=document.documentElement;const d=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=d?'light':'dark'};
+const PW='1194';
+function unlock(){$('lock').classList.add('hide');try{sessionStorage.setItem('cw.ok','1')}catch(e){}anim=true;render()}
+$('go').onclick=()=>{const b=$('pw');if(b.value===PW)unlock();else{$('err').textContent='Wrong password 🙈';b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');b.value=''}};
+$('pw').onkeydown=e=>{if(e.key==='Enter')$('go').click()};
+$('lockbtn').onclick=()=>{try{sessionStorage.removeItem('cw.ok')}catch(e){}$('out').innerHTML='';$('pw').value='';$('err').textContent='';$('lock').classList.remove('hide');$('pw').focus()};
+let ok=false;try{ok=sessionStorage.getItem('cw.ok')==='1'}catch(e){}
+if(ok)unlock();else $('pw').focus();
+</script>
+</body>
+</html>
